@@ -11,17 +11,16 @@
 |
 */
 
+
 Route::get('/', function () {
     return view('welcome');
 });
 
+
+
 Route::get('email-test', function(){
     return 'hello';
-})->middleware(['auth', 'email_verified','mobile_verified']);
-
-
-
-
+})->middleware(['auth', 'user_is_support', 'user_is_admin']);
 
 
 // To Import unit data to db
@@ -29,5 +28,4 @@ Route::get('email-test', function(){
 
 
 Auth::routes();
-
 Route::get('/home', 'HomeController@index')->name('home');

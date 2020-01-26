@@ -5,6 +5,8 @@ use App\Models\Category;
 use App\Models\Image;
 use App\Models\Product;
 use App\Models\Review;
+use App\Models\Tag;
+use App\Models\Ticket;
 use App\Models\User;
 use Faker\Factory;
 use Illuminate\Database\Seeder;
@@ -24,5 +26,6 @@ class DatabaseSeeder extends Seeder
         // factory(Image::class, 100)->create();
         // factory(Review::class, 500)->create();
         // factory(Category::class, 50)->create();
+        // factory(Ticket::class, 150)->create();
     }
 }
