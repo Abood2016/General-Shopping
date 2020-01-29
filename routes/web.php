@@ -18,9 +18,39 @@ Route::get('/', function () {
 
 
 
-Route::get('email-test', function(){
-    return 'hello';
-})->middleware(['auth', 'user_is_support', 'user_is_admin']);
+Route::group(['auth','user_is_admin'],function(){
+
+    //units
+    Route::get('units', 'UnitController@index')->name('units');
+    
+    //categories
+    Route::get('categories', 'CategoryController@index')->name('categories');
+
+    //products
+    Route::get('products', 'ProductController@index')->name('products');
+
+    //tags
+    Route::get('tags', 'TagController@index')->name('tags');
+
+    //payments
+    //orders
+    //shipment
+
+    //countries
+    Route::get('countries', 'CountryController@index')->name('coutries');
+
+
+    //cities
+    Route::get('cities', 'CityController@index')->name('cities');
+
+    //states
+    Route::get('states', 'StateController@index')->name('states');
+    
+    //roles
+    //reviews
+    //tickits
+
+});
 
 
 // To Import unit data to db

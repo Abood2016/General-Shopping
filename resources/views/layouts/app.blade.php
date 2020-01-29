@@ -51,10 +51,35 @@
                         @else
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ Auth::user()->first_name }} <span class="caret"></span>
+                                    Options <span class="caret"></span>
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                    
+                                    <a class="dropdown-item" href="{{ route('products') }}">
+                                        {{ __('Products') }}
+                                    </a>
+
+                                    <a class="dropdown-item" href="{{ route('categories') }}">
+                                        {{ __('Categories') }}
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('tags') }}">
+                                        {{ __('Tags') }}
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('units') }}">
+                                        {{ __('Units') }}
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('coutries') }}">
+                                        {{ __('Coutries') }}
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('cities') }}">
+                                        {{ __('Cities') }}
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('states') }}">
+                                        {{ __('States') }}
+                                    </a>
+
+                                    
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
@@ -72,7 +97,7 @@
             </div>
         </nav>
 
-        <main class="py-4">
+        <main class="mt-2">
             @yield('content')
         </main>
     </div>
