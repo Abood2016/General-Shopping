@@ -9,8 +9,7 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-    <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
+    <script src="https://kit.fontawesome.com/e383227d0a.js" crossorigin="anonymous"></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -78,6 +77,16 @@
                                     <a class="dropdown-item" href="{{ route('states') }}">
                                         {{ __('States') }}
                                     </a>
+                                     <a class="dropdown-item" href="{{ route('reviews') }}">
+                                        {{ __('Reviews') }}
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('tickets') }}">
+                                        {{ __('Tickets') }}
+                                    </a>
+
+                                    <a class="dropdown-item" href="{{ route('roles') }}">
+                                        {{ __('Roles') }}
+                                    </a>
 
                                     
                                     <a class="dropdown-item" href="{{ route('logout') }}"
@@ -101,5 +110,9 @@
             @yield('content')
         </main>
     </div>
+
+    <!-- Scripts -->
+    <script src="{{ asset('js/app.js') }}"></script>
+    @yield('scripts')
 </body>
 </html>

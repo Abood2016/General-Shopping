@@ -2,24 +2,22 @@
 
 @section('content')
 
-     <div class="container">
+    <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h3>States</h3>
+                <h3>Roles</h3>
             <div class="card">
-                <div class="card-header">States</div>
+                <div class="card-header">Roles</div>
                   <div class="card-body">
                     <div class="row">
-                     @foreach ($states as $state)
+                     @foreach ($roles as $role)
                       <div class="col-md-3">
                         <div class="alert alert-primary">
-                             <h5>{{$state->name}}</h5>
-                             <p>Country:{{$state->country->name}}</p>
+                            <p>{{$role->role}}</p>
                         </div>
                     </div>   
                       @endforeach
                     </div>
-                    {{$states->links()}}
                   </div>
                 </div>
                </div>

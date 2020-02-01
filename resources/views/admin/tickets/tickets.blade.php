@@ -5,21 +5,24 @@
      <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h3>States</h3>
+                <h3>Tickets</h3>
             <div class="card">
-                <div class="card-header">States</div>
+                <div class="card-header">Tickets</div>
                   <div class="card-body">
                     <div class="row">
-                     @foreach ($states as $state)
+                     @foreach ($tickets as $ticket)
                       <div class="col-md-3">
                         <div class="alert alert-primary">
-                             <h5>{{$state->name}}</h5>
-                             <p>Country:{{$state->country->name}}</p>
+                            <h5>User: {{$ticket->customer->formattedName()}}</h5>
+                             <p>{{$ticket->title}}</p>
+                             <p>Ticktet Type: {{$ticket->tickitType->name}}</p>
+                             <p>Status: <span style="color: red">{{$ticket->status}}</span></p>
+                             <p>Date: {{$ticket->created_at->diffForHumans()}}</p>
                         </div>
                     </div>   
                       @endforeach
                     </div>
-                    {{$states->links()}}
+                    {{$tickets->links()}}
                   </div>
                 </div>
                </div>

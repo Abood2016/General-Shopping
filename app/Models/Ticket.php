@@ -15,7 +15,12 @@ class Ticket extends Model
 
     public function customer()
     {
-        return $this->hasMany(User::class);
+        return $this->belongsTo(User::class , 'user_id' , 'id');
+    }
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
     }
 
     public function tickitType()
