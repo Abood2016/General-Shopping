@@ -9,7 +9,7 @@
             <div class="card">
                 <div class="card-header">Units</div>
                   <div class="card-body">
-                    <div class=" ml-2">
+                    <div class="ml-2">
                     <form action="{{ route('unit.store') }}" method="POST" class="row">
                           @csrf
                               <div class="form-group col-md-6">
@@ -52,7 +52,22 @@
                     </div>   
                       @endforeach
                     </div>
-                    {{$units->links()}}
+                    
+                    {{(! is_null($showLinks) && $showLinks ) ? $units->links() : ''}}
+
+
+                  <form action="{{route('unit.search')}}" method="POST">  
+                      @csrf
+                      <div class="row">
+                        <div class="form-group col-md-6">
+                          <input type="text" class="form-control" name="unit_search" id="unit_search" placeholder="unit Search" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                          <button type="submit" class="btn btn-primary">SEARCH</button>
+                        </div>
+                      </div>
+                  </form>
+
                   </div>
                 </div>
                </div>
@@ -89,10 +104,10 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-    <form action="{{ route('unit.store') }}" method="POST">
+    <form action="{{ route('unit.update') }}" method="POST">
            <div class="modal-body">
-                @csrf
-                {{method_field('PUT')}}
+            @csrf
+            {{method_field('PUT')}}
               <div class="row">
                 <div class="form-group col-md-6">
                   <label for="unit_name">Unit Name</label>

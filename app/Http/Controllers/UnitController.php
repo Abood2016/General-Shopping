@@ -13,8 +13,65 @@ class UnitController extends Controller
     {
         $units = Unit::OrderBy('id', 'desc')->paginate(env('PAGINATION_COUNT'));
         return view('admin.units.units')->with([
-            'units' => $units
+            'units' => $units,
+            'showLinks' => true,
         ]);
+    }
+
+
+    private function unitNameExists($unit_name){
+        $unit = Unit::where(
+            'unit_name', '=' ,$unit_name
+            )->first();
+          
+            if (!is_null($unit)) {
+                Session::flash('message', ' Unit Name ('.$unit_name.') already exists');
+                return false;
+            }
+            return true;
+    }
+
+
+    private function unitCodeExists($unit_code)
+    {
+        $unit = Unit::where(
+            'unit_code', '=', $unit_code
+        )->first();
+         
+         if (!is_null($unit)) {
+                Session::flash('message', ' Unit Code ('.$unit_code.') already exists');
+                return false;
+            }
+            return true;
+    }
+
+
+    public function search(Request $request)
+    {
+        $request->validate([
+            'unit_search' => 'required'
+        ]);
+
+        $searchTerm = $request->input('unit_search');
+
+        $units = Unit::where(
+            
+           'unit_name' , 'LIKE' , '%' .$searchTerm . '%'
+
+        )->orWhere(
+           'unit_code' , 'LIKE' , '%' .$searchTerm . '%'
+
+        )->get();
+
+        if (count($units) > 0) {
+            return view('admin.units.units')->with([
+                'units' => $units,
+                'showLinks' => false
+            ]);
+        }
+        Session::flash('message' , 'Nothing Found!');
+        return redirect()->back();
+
     }
 
     public function store(Request $request)
@@ -23,6 +80,18 @@ class UnitController extends Controller
             'unit_name' => 'required',
             'unit_code' => 'required',
         ]);
+
+        $unit_name = $request->input('unit_name');
+        $unit_code = $request->input('unit_code');
+
+           if (!$this->unitNameExists($unit_name)) {
+               return redirect()->back();
+           } 
+           
+           if (!$this->unitCodeExists($unit_code)) {
+               return redirect()->back();
+           } 
+
 
         $unit = new Unit();
         $unit->unit_name = $request->input('unit_name');
@@ -41,6 +110,18 @@ class UnitController extends Controller
             'unit_code' => 'required',
         ]);
 
+        // $unit_name = $request->input('unit_name');
+        // $unit_code = $request->input('unit_code');
+
+        //    if (!$this->unitNameExists($unit_name)) {
+        //        return redirect()->back();
+        //    } 
+           
+        //    if (!$this->unitCodeExists($unit_code)) {
+        //        return redirect()->back();
+        //    } 
+
+
         //intval like casting id must be only int
         $unit_id = intval($request->input('unit_id'));
 
@@ -50,7 +131,7 @@ class UnitController extends Controller
         $unit->save();
 
         Session::flash('message', ' Unit ' . $unit->unit_name . ' has been Updated');
-        return \redirect()->back();
+        return \redirect()->route('units');
     }
 
     public function delete(Request $request)
@@ -63,6 +144,6 @@ class UnitController extends Controller
         $id = $request->input('unit_id');
         Unit::destroy($id);
         Session::flash('message', ' Unit has been deleted');
-        return \redirect()->back();
+        return \redirect()->route('units');
     }
 }
