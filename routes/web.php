@@ -25,10 +25,14 @@ Route::group(['auth','user_is_admin'],function(){
     Route::post('units', 'UnitController@store')->name('unit.store');
     Route::delete('units', 'UnitController@delete')->name('unit.delete');
     Route::put('units', 'UnitController@update')->name('unit.update');
-    Route::post('search-units', 'UnitController@search')->name('unit.search');
+    Route::get('search-units', 'UnitController@search')->name('unit.search');
     
     //categories
     Route::get('categories', 'CategoryController@index')->name('categories');
+    Route::post('categories', 'CategoryController@store')->name('categories.store');
+    Route::get('categories-search', 'CategoryController@search')->name('categories.search');
+    Route::put('categories', 'CategoryController@update')->name('categories.update');
+    Route::delete('categories', 'CategoryController@delete')->name('categories.delete');
 
     //products
     Route::get('products', 'ProductController@index')->name('products');
@@ -36,8 +40,8 @@ Route::group(['auth','user_is_admin'],function(){
     //tags
     Route::get('tags', 'TagController@index')->name('tags');
     Route::post('tags', 'TagController@store')->name('tag.store');
-    Route::post('tags-search', 'TagController@search')->name('tag.search');
-    Route::put('units', 'TagController@update')->name('tag.update');
+    Route::get('tags-search', 'TagController@search')->name('tag.search');
+    Route::put('tags', 'TagController@update')->name('tag.update');
     Route::delete('tags', 'TagController@delete')->name('tag.delete');
 
     //payments
@@ -46,7 +50,7 @@ Route::group(['auth','user_is_admin'],function(){
 
     //countries
     Route::get('countries', 'CountryController@index')->name('coutries');
-
+    
 
     //cities
     Route::get('cities', 'CityController@index')->name('cities');

@@ -131,7 +131,7 @@ class UnitController extends Controller
         $unit->save();
 
         Session::flash('message', ' Unit ' . $unit->unit_name . ' has been Updated');
-        return \redirect()->route('units');
+        return \redirect()->back();
     }
 
     public function delete(Request $request)
@@ -144,6 +144,6 @@ class UnitController extends Controller
         $id = $request->input('unit_id');
         Unit::destroy($id);
         Session::flash('message', ' Unit has been deleted');
-        return \redirect()->route('units');
+        return \redirect()->back();
     }
 }

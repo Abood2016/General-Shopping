@@ -57,6 +57,11 @@ class TagController extends Controller
         ]);
 
 
+        $tagName = $request->input('tag');
+        if (!$this->TagNameExists($tagName)) {
+            return redirect()->back();
+        }
+
         $tag_id = intval($request->input('tag_id'));
 
         $tag = Tag::find($tag_id);
@@ -64,7 +69,7 @@ class TagController extends Controller
         $tag->save();
         
         Session::flash('message', ' Tag ' . $tag->tag . ' has been Updated');
-        return \redirect()->route('tags');
+        return \redirect()->back();
 
     }
 
@@ -103,7 +108,7 @@ class TagController extends Controller
         $id = $request->input('tag_id');
         Tag::destroy($id);
         Session::flash('message', ' Tag has been deleted');
-        return \redirect()->route('tags');
+        return \redirect()->back();
         
     }
 

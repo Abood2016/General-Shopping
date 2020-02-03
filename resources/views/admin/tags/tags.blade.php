@@ -49,7 +49,7 @@
                   </div>
                     {{ (!is_null($showLinks) && $showLinks) ? $tags->links() : '' }}
 
-                     <form action="{{route('tag.search')}}" method="POST">  
+                     <form action="{{route('tag.search')}}" method="GET">  
                       @csrf
                       <div class="row">
                         <div class="form-group col-md-6">
@@ -104,7 +104,7 @@
               <div class="row">
                 <div class="form-group col-md-6">
                   <label for="tag">Tag</label>
-                  <input type="text" class="form-control" name="tag" id="edit_tag" placeholder="Unit Name" required>
+                  <input type="text" class="form-control" name="tag" id="edit_tag" placeholder="Tag Name" required>
                 </div>
 
                 <input type="hidden" name="tag_id" id="edit_tag_id">

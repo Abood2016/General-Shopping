@@ -56,7 +56,7 @@
                     {{(! is_null($showLinks) && $showLinks ) ? $units->links() : ''}}
 
 
-                  <form action="{{route('unit.search')}}" method="POST">  
+                  <form action="{{route('unit.search')}}" method="GET">  
                       @csrf
                       <div class="row">
                         <div class="form-group col-md-6">
