@@ -11,6 +11,8 @@
 |
 */
 
+use App\Models\Category;
+use App\Models\Product;
 
 Route::get('/', function () {
     return view('welcome');
@@ -36,6 +38,11 @@ Route::group(['auth','user_is_admin'],function(){
 
     //products
     Route::get('products', 'ProductController@index')->name('products');
+    Route::get('new-product', 'ProductController@newproduct')->name('new-product');
+    Route::get('update-product/{id}', 'ProductController@newproduct')->name('update-new-product');
+    Route::put('update-product', 'ProductController@update')->name('update-product');
+    Route::post('new-product', 'ProductController@store');
+    Route::delete('products/{id}', 'ProductController@delete')->name('product.delete');
 
     //tags
     Route::get('tags', 'TagController@index')->name('tags');
@@ -76,3 +83,4 @@ Route::group(['auth','user_is_admin'],function(){
 
 Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
+
