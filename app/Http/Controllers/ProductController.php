@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Image;
 use App\Models\Product;
 use App\Models\Unit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
 class ProductController extends Controller
 {
@@ -13,26 +15,25 @@ class ProductController extends Controller
     {
         $products = Product::with(['category', 'images'])->paginate(env('PAGINATION_COUNT'));
 
-         $currency_code = env('CURRENCY_CODE' , "$");
+        $currency_code = env('CURRENCY_CODE', "$");
 
         return view('admin.products.products')->with([
             'products' => $products,
             'currency_code' => $currency_code
         ]);
-
     }
 
     public function newproduct($id = null)
     {
         $product = null;
-        if( !is_null( $id ) ){
+        if (!is_null($id)) {
             $product = Product::with([
                 'hasUnit', 'category'
             ])->find($id);
-         }
+        }
 
-         $units = Unit::all();
-         $categories = Category::all();
+        $units = Unit::all();
+        $categories = Category::all();
 
         return view('admin.products.new-product')->with([
             'product' => $product,
@@ -41,8 +42,61 @@ class ProductController extends Controller
         ]);
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
+        $request->validate([
+            'title' => 'required',
+            'description' => 'required',
+            'price' => 'required',
+            'unit' => 'required',
+            'discount' => 'required',
+            'total' => 'required',
+            'category_id' => 'required',
+        ]);
 
+        $product = new Product();
+        $product->title = $request->input('title');
+        $product->description = $request->input('description');
+        $product->unit = intval($request->input('unit'));
+        $product->price = doubleval($request->input('price'));
+        $product->total = doubleval($request->input('total'));
+        $product->category_id = intval($request->input('category_id'));
+        $product->discount = doubleval($request->input('discount'));
+
+        if ($request->has('options')) {
+            $optionArray = [];
+
+            $options = array_unique($request->input('options'));  //get one option of the list
+
+            foreach ($options as  $option) {
+
+                $actualOptions = $request->input($option);
+
+                $optionArray[$option] = [];
+
+                foreach ($actualOptions as  $actualOption) {
+
+                    array_push($optionArray[$option], $actualOption);
+                }
+            }
+
+            $product->options = json_encode($optionArray);
+        }
+
+        $product->save();
+        if ($request->hasFile('product_images')) {
+            $images = $request->file('product_images');
+            foreach ($images as $image) {
+                $path = $image->store('public');
+                $image = new Image();
+                $image->url = $path;
+                $image->product_id = $product->id;
+                $image->save();
+            }
+        }
+
+        Session::flash('message', 'Product has been Added');
+        return redirect(route('products'));
     }
 
     public function update(Request $request)
@@ -50,7 +104,7 @@ class ProductController extends Controller
         dd($request);
     }
 
-    public function delete(Request $request ,$id)
+    public function delete(Request $request, $id)
     {
     }
 }

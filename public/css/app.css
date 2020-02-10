@@ -11398,3 +11398,11 @@ a.remove-option {
   color: #ff3f4c;
 }
 
+a.activate-image-upload {
+  display: inline-block;
+}
+
+input.image-file-upload {
+  display: none;
+}
+

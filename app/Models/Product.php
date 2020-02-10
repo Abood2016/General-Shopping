@@ -9,7 +9,7 @@ class Product extends Model
     protected $fillable = [
     'title', 'description',
     'unit','price',
-    'total','category_id'
+    'total','category_id','options'
 ];
 
 
@@ -35,6 +35,11 @@ class Product extends Model
 
     public function hasUnit(){
         return $this->belongsTo(Unit::class , 'unit' , 'id');
+    }
+
+    public function jsonOptions(){
+
+        return \json_decode($this->options);
     }
 
     

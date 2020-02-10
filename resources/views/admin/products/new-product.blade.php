@@ -11,7 +11,7 @@
                 {!! !is_null($product) ? 'Update Product <span class ="product-header-title "> ' . $product->title . '</span>' : 'New Product'  !!}    
             </div>
             <div class="card-body">
-              <form action="{{route('update-product')}}" method="post" class="row">
+              <form action="{{  (! is_null($product)) ?  route('update-product')   : route('new-product') }}" method="post" class="row" enctype="multipart/form-data">
                    @csrf
                    @if (! is_null($product))
                        <input type="hidden" name="_method" value="put"> 
@@ -31,7 +31,7 @@
 
                  <div class="form-group col-md-12">
                   <label for="product_category">Product Category</label>
-                   <select class="form-control" name="category" id="category" required>
+                   <select class="form-control" name="category_id" id="category_id" required>
                     <option>Select a Category</option>
                      @foreach ($categories as $category)
                       <option value="{{$category->id}}" 
@@ -56,7 +56,7 @@
 
                 <div class="form-group col-md-6">
                   <label for="price">Product Price</label>
-                  <input type="number" class="form-control" name="price" id="price" placeholder="Product Price" 
+                  <input type="number" step="any" class="form-control" name="price" id="price" placeholder="Product Price" 
                   required value="{{ (!is_null($product)) ? $product->price : '' }}">
                 </div>
 
@@ -68,7 +68,7 @@
 
                 <div class="form-group col-md-12">
                   <label for="product_total">Product Total</label>
-                  <input type="number" class="form-control" name="total" id="total" placeholder="Product Total" 
+                  <input type="number" class="form-control" step="any" name="total" id="total" placeholder="Product Total" 
                   required value="{{ (!is_null($product)) ? $product->total : '' }}">
                 </div>
 
@@ -77,10 +77,35 @@
                     <table class="table table-stripe" id="options-table">
                            
                     </table>
-                    <a href="#" class="btn btn-primary add-option-btn">Add Options</a>
+                    <a href="#" class="btn btn-outline-dark add-option-btn">Add Options</a>
                 </div>
 
+              <div class="form-group col-md-12">
+
+                <div class="row">
+
+                  @for ($i = 0; $i < 6; $i++)
+                    <div class="col-md-4 col-sm-12 mb-4"> 
+                      <div class="card image-card-upload">
+                          <a href="#" class="activate-image-upload" data-fileid="image-{{ $i }}">
+                         <div class="card-body" style="text-align: center">
+                          {{-- <i class="fas fa-image"></i> --}}
+                        </div>
+                      </a>
+                      <input type="file" name="product_images[]" class="form-control-file image-file-upload" id="image-{{ $i }}"> 
+                      </div>
+                    </div>
+                  @endfor
+                 
+                </div>
+              </div>   
+
     
+                <div class="form-group col-md-6 offset-3">
+                
+                    <button type= "submit" class = "btn btn-primary btn-block">Save</button>
+
+                </div>
             </form>
         </div>
        </div>
@@ -128,7 +153,7 @@
 <script>
 
       $(document).ready(function(){
-
+        var $optionsNameList = [];
         var $optionWindow = $('#options-window');
         var $optionBtn = $('.add-option-btn');
         var $optionsTable = $('#options-table');
@@ -138,6 +163,7 @@
         });
 
 
+        //add options with modal
         $(document).on('click' , '.add-option-modal-button' , function(e){
             e.preventDefault();
              var $optionName = $('#option_name'); //get the value form modal input
@@ -151,6 +177,17 @@
                     alert('Option Value is Required');
                     return false;
                 }
+
+              var optionsNameRow = '';
+              if ( ! $optionsNameList.includes($optionName)) {
+              
+                  $optionsNameList.push( $optionName.val() );   
+                
+                   optionsNameRow = '<td><input type="hidden" name = "options[]" value = "'+ $optionName.val() +'" ></td>';
+              }  
+
+
+
 
                var optionRow = `
                 <tr>
@@ -170,6 +207,10 @@
                 $optionsTable.append(
                     optionRow
                 );
+                $optionsTable.append(
+                    optionsNameRow
+                );
+
                 $optionName.val('');
                 $optionValue.val('');
                $optionWindow.modal('hide');
@@ -180,7 +221,41 @@
             e.preventDefault();
             $(this).parent().parent().remove(); //parent 1 is <td> and parent 2 is <tr>
         });
+        //end options
 
+
+        //upload images
+          //function read the image only
+          function readUrl(input , imageID)
+          {
+            if (input.files && input.files[0]) {
+               var reader = new FileReader();
+
+               reader.onload  = (function(e) {
+                 $('#'+ imageID).attr('src' , e.target.result);
+               });
+
+               reader.readAsDataURL(input.files[0]); 
+            }
+          }
+          
+          var $activateImageUpload = $('.activate-image-upload');
+
+          $activateImageUpload.on('click' , function(e){
+            e.preventDefault();
+            var fileUploadID = $(this).data('fileid');
+             $("#" + fileUploadID).trigger('click');
+                var imagetag = '<img  id="i'+ fileUploadID +'"  src="" class = " card-img-top">';
+                $(this).append(imagetag);
+              
+              $("#" + fileUploadID).on('change' , function(e){
+
+                      readUrl(this , 'i' + fileUploadID);
+              });
+
+          });
+
+        //end upload images
 
       });
 
