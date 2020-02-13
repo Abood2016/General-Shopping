@@ -74,10 +74,35 @@
 
                 {{-- Options --}}
                 <div class="form-group col-md-12"> 
-                    <table class="table table-stripe" id="options-table">
-                           
+                    <table class="table table-striped" id="options-table">
+                          @if (!is_null( $product ))
+                            @if (!is_null( $product->jsonOptions() ))
+                                @foreach ($product->jsonOptions() as $optionName => $options)
+                                   @foreach ($options as $option)
+                                       
+                                <tr>
+                                  <td>
+                                      {{ $optionName }}
+                                  </td>    
+                                    
+                                  <td>
+                                     {{ $option }}
+                                  </td>
+                                  <td>
+                                      <a href="" class="remove-option"><i class="fas fa-minus-circle"></i></a>
+                                     <input type="hidden" name =" {{ $optionName }}[]" value =" {{ $option }} " >
+                                  </td>
+                                </tr>
+                                  @endforeach
+
+                                  <td><input type="hidden" name = "options[]" value = "{{ $optionName }}" ></td>
+
+                                @endforeach
+                            @endif    
+                          @endif
+                          
                     </table>
-                    <a href="#" class="btn btn-outline-dark add-option-btn">Add Options</a>
+                  <a href="#" class="btn btn-outline-dark add-option-btn">Add Options</a>
                 </div>
 
               <div class="form-group col-md-12">
@@ -87,9 +112,10 @@
                   @for ($i = 0; $i < 6; $i++)
                     <div class="col-md-4 col-sm-12 mb-4"> 
                       <div class="card image-card-upload">
+                        <a href="" class="remove-image-upload"><i class="fas fa-minus-circle"></i></a>
                           <a href="#" class="activate-image-upload" data-fileid="image-{{ $i }}">
                          <div class="card-body" style="text-align: center">
-                          {{-- <i class="fas fa-image"></i> --}}
+                          <i class="fas fa-image"></i>
                         </div>
                       </a>
                       <input type="file" name="product_images[]" class="form-control-file image-file-upload" id="image-{{ $i }}"> 
@@ -151,9 +177,21 @@
 @section('scripts')
 
 <script>
+        var $optionsNameList = [];
+</script>
+
+  @if (!is_null($product))
+      @if (!is_null($product->jsonOptions()))
+          @foreach ($product->jsonOptions() as $optionName => $options)
+              <script>$optionsNameList.push( '{{ $optionName }}' );</script>
+          @endforeach
+      @endif
+  @endif
+
+<script>
 
       $(document).ready(function(){
-        var $optionsNameList = [];
+        console.log($optionsNameList);
         var $optionWindow = $('#options-window');
         var $optionBtn = $('.add-option-btn');
         var $optionsTable = $('#options-table');
@@ -187,9 +225,7 @@
               }  
 
 
-
-
-               var optionRow = `
+            var optionRow = `
                 <tr>
                     <td>
                         `+ $optionName.val() +`
@@ -239,10 +275,22 @@
             }
           }
           
+
+          function resetFileUpload(fileUploadID , imageID , $el , $ed) {
+            $('#'+imageID).attr('src' , '');
+            $el.fadeIn();
+            $ed.fadeOut();
+            // $('#'+fileUploadID).val(''); //by jquery
+            document.getElementById(fileUploadID).value = ''; //by javascript
+
+          }
+
+
           var $activateImageUpload = $('.activate-image-upload');
 
           $activateImageUpload.on('click' , function(e){
             e.preventDefault();
+            var anchor = $(this); // get the anchor tag to from image
             var fileUploadID = $(this).data('fileid');
              $("#" + fileUploadID).trigger('click');
                 var imagetag = '<img  id="i'+ fileUploadID +'"  src="" class = " card-img-top">';
@@ -251,6 +299,15 @@
               $("#" + fileUploadID).on('change' , function(e){
 
                       readUrl(this , 'i' + fileUploadID);
+                      anchor.find('i').fadeOut();
+                      var $removeThisImage = anchor.parent().find('.remove-image-upload'); 
+                      $removeThisImage.fadeIn();
+                      $removeThisImage.on('click',function(e){
+                        e.preventDefault();
+                        resetFileUpload(fileUploadID ,'i' + fileUploadID ,anchor.find('i') ,$removeThisImage );
+                      });
+
+
               });
 
           });
