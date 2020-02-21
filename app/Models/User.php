@@ -20,7 +20,7 @@ class User extends Authenticatable
          'email', 'email_verified',
         'mobile_verified', 'mobile',
         'password', 'shipping_address',
-        'billing_address',
+        'billing_address', 'api_token'
     ];
 
     /**

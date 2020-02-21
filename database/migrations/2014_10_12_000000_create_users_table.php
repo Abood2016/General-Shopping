@@ -27,7 +27,6 @@ class CreateUsersTable extends Migration
             $table->bigInteger('shipping_address')->nullable();
             $table->bigInteger('billing_address')->nullable();
 
-
             $table->string('password');
 
             $table->rememberToken();
