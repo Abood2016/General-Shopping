@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Resources\UserFullResource;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 /*
@@ -32,6 +34,12 @@ Route::get('products/{id}', 'Api\ProductController@show');
 Route::get('countries', 'Api\CountryController@index');
 Route::get('countries/{id}/states', 'Api\CountryController@showStates');
 Route::get('countries/{id}/cities', 'Api\CountryController@showCities');
+
+
+Route::حخسف('countries/{id}/cities', 'Api\CountryController@showCities');
+
+
+
 
 
 
