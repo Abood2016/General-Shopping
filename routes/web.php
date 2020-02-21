@@ -40,7 +40,7 @@ Route::group(['auth','user_is_admin'],function(){
     Route::get('products', 'ProductController@index')->name('products');
     Route::get('new-product', 'ProductController@newproduct')->name('new-product');
     Route::post('new-product', 'ProductController@store');
-    
+    Route::post('delete-image' , 'ProductController@deleteImage')->name('delete-image');
     Route::get('update-product/{id}', 'ProductController@newproduct')->name('update-new-product');
     Route::put('update-product', 'ProductController@update')->name('update-product');
     Route::delete('products/{id}', 'ProductController@delete')->name('product.delete');

@@ -112,13 +112,49 @@
                   @for ($i = 0; $i < 6; $i++)
                     <div class="col-md-4 col-sm-12 mb-4"> 
                       <div class="card image-card-upload">
-                        <a href="" class="remove-image-upload"><i class="fas fa-minus-circle"></i></a>
-                          <a href="#" class="activate-image-upload" data-fileid="image-{{ $i }}">
-                         <div class="card-body" style="text-align: center">
-                          <i class="fas fa-image"></i>
+                         @if (  !is_null($product) &&  ! is_null($product->images) && count($product->images) > 0 )
+                                @if ( isset($product->images[$i]) && ! is_null($product->images[$i]) && !empty($product->images[$i]) )
+
+                            <a href="" class="remove-image-upload" data-imageid="{{ $product->images[$i]->id }}" 
+                              data-fileid="image-{{ $i }}"
+                               data-removeimg="removeimg-{{ $i }}">
+                               <i class="fas fa-minus-circle"></i>
+                            </a>
+                                @else 
+                                <a href="" class="remove-image-upload" style="display: none" ><i class="fas fa-minus-circle"></i></a>
+
+                                @endif
+                              @endif
+                            <a href="#" class="activate-image-upload" data-fileid="image-{{ $i }}" id="removeimg-{{ $i }}">
+                        
+                              @if (!is_null($product) && ! is_null($product->images) && count($product->images) > 0 )
+                                @if ( isset($product->images[$i]) && ! is_null($product->images[$i]) && !empty($product->images[$i]) )
+
+                                <img src="{{ asset("storage/".$product->images[$i]->url) }}" id="{{ 'iimage-'.$i }}" class="card-img-top">
+                                @endif
+                              @endif
+                        
+                            <div class="card-body" style="text-align: center">
+                               @if (!is_null($product) && ! is_null($product->images) && count($product->images) > 0 )
+                                @if ( isset($product->images[$i]) && ! is_null($product->images[$i]) && !empty($product->images[$i]) )
+                                <i class="fas fa-image" style="display: none"></i>
+                                @else 
+                                <i class="fas fa-image"></i>
+                                @endif
+                                @else
+                                <i class="fas fa-image"></i>
+                              @endif
                         </div>
                       </a>
-                      <input type="file" name="product_images[]" class="form-control-file image-file-upload" id="image-{{ $i }}"> 
+                      @if ( !is_null($product) && ! is_null($product->images) && count($product->images) > 0 )
+                                @if ( isset($product->images[$i]) && ! is_null($product->images[$i]) && !empty($product->images[$i]) )
+                               <input type="file" name="product_images[]" class="form-control-file image-file-upload" id="image-{{ $i }}" value="{{ asset("storage/".$product->images[$i]->url) }}"> 
+                                @else 
+                                <input type="file" name="product_images[]" class="form-control-file image-file-upload" id="image-{{ $i }}"> 
+                                @endif
+                                @else
+                                <input type="file" name="product_images[]" class="form-control-file image-file-upload" id="image-{{ $i }}"> 
+                              @endif
                       </div>
                     </div>
                   @endfor
@@ -170,6 +206,30 @@
     </div>
   </div>
 </div>
+
+<div class="modal image-window" tabindex="-1" role="dialog" id="options-window">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete image</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+           <div class="modal-body">
+            <p>Are You Sure you want to delete this Image?</p>
+          </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancle</button>
+        <a href="#" type="submit" class="delete-image-btn btn btn-primary">DELETE IMAGE</a>
+      </div>
+   
+
+
+    </div>
+  </div>
+</div>
+
 @endsection
 
 
@@ -191,8 +251,8 @@
 <script>
 
       $(document).ready(function(){
-        console.log($optionsNameList);
         var $optionWindow = $('#options-window');
+        var $imagewindow = $('.image-window');
         var $optionBtn = $('.add-option-btn');
         var $optionsTable = $('#options-table');
         $optionBtn.on('click' , function(e){
@@ -281,9 +341,10 @@
             $el.fadeIn();
             $ed.fadeOut();
             // $('#'+fileUploadID).val(''); //by jquery
-            document.getElementById(fileUploadID).value = ''; //by javascript
-
+             var element = document.getElementById(fileUploadID); //by javascript
+             element.value = '';
           }
+
 
 
           var $activateImageUpload = $('.activate-image-upload');
@@ -312,8 +373,53 @@
 
           });
 
-        //end upload images
+          $('.remove-image-upload').on('click' , function(e){
+             e.preventDefault();
+             var anchor = $(this);
+             var imageId = anchor.data('imageid');
+             var removeID  = $(this).data('removeimg');
+             var fileUploadID = $(this).data('fileid');
+             var $removeThisImage = anchor.parent().find('.remove-image-upload'); 
 
+            $('.delete-image-btn').data('ed' ,$removeThisImage );
+            $('.delete-image-btn').data('fileid' ,fileUploadID );
+            $('.delete-image-btn').data('removeimg' ,removeID );
+            $('.delete-image-btn').data('imageid' , imageId);
+            $imagewindow.modal('show');
+
+          });
+
+
+
+      $(document).on('click', '.delete-image-btn' , function(e){
+        e.preventDefault();
+        var imageId = $(this).data('imageid');
+        var removeID = $(this).data('removeimg');
+        var fileUploadID = $(this).data('fileid');
+        var ed = $(this).data('ed');
+  
+        resetFileUpload(fileUploadID ,'i' + fileUploadID , $('#'+ removeID).find('i')  ,ed );
+
+        $.ajaxSetup({
+        
+            headers: {
+            
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            
+              }});
+
+        $.ajax({
+              url : "{{route('delete-image')}}",
+              data : {
+                image_id : imageId, 
+              },
+              dataType: 'json',
+               method: 'POST',
+               
+            });
+             $imagewindow.modal('hide');
+        });    
+        //end upload images
       });
 
 </script>

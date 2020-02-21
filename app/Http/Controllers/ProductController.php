@@ -28,7 +28,7 @@ class ProductController extends Controller
         $product = null;
         if (!is_null($id)) {
             $product = Product::with([
-                'hasUnit', 'category'
+                'hasUnit', 'category','images'
             ])->find($id);
         }
 
@@ -42,19 +42,8 @@ class ProductController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    private function writeProduct(Request $request , Product $product , $update = false)
     {
-        $request->validate([
-            'title' => 'required',
-            'description' => 'required',
-            'price' => 'required',
-            'unit' => 'required',
-            'discount' => 'required',
-            'total' => 'required',
-            'category_id' => 'required',
-        ]);
-
-        $product = new Product();
         $product->title = $request->input('title');
         $product->description = $request->input('description');
         $product->unit = intval($request->input('unit'));
@@ -94,6 +83,24 @@ class ProductController extends Controller
                 $image->save();
             }
         }
+        return $product;
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'title' => 'required',
+            'description' => 'required',
+            'price' => 'required',
+            'unit' => 'required',
+            'discount' => 'required',
+            'total' => 'required',
+            'category_id' => 'required',
+        ]);
+
+        $product = new Product();
+
+        $this->writeProduct($request , $product);
 
         Session::flash('message', 'Product has been Added');
         return redirect(route('products'));
@@ -101,10 +108,28 @@ class ProductController extends Controller
 
     public function update(Request $request)
     {
-        dd($request);
+        $request->validate([
+            'title' => 'required',
+            'description' => 'required',
+            'price' => 'required',
+            'unit' => 'required',
+            'discount' => 'required',
+            'total' => 'required',
+            'category_id' => 'required',
+        ]);
+
+        $product_id = $request->input('product_id');
+        $product = Product::find($product_id);
+        $this->writeProduct( $request , $product,true );
+
+        Session::flash('message', 'Product has been Updated');
+        return back();
     }
 
-    public function delete(Request $request, $id)
+    
+    public function deleteImage(Request $request)
     {
+            $imageID = $request->input('image_id');
+            Image::destroy($imageID);
     }
 }
