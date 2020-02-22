@@ -35,10 +35,9 @@ Route::get('countries', 'Api\CountryController@index');
 Route::get('countries/{id}/states', 'Api\CountryController@showStates');
 Route::get('countries/{id}/cities', 'Api\CountryController@showCities');
 
-
-Route::حخسف('countries/{id}/cities', 'Api\CountryController@showCities');
-
-
+//use Register and login
+Route::post('auth/register', 'Api\AuthController@register');
+Route::post('auth/login', 'Api\AuthController@login');
 
 
 
